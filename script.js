@@ -1,26 +1,29 @@
 const gel = element => document.querySelector(element);
-const ballsArray = [];
 
-const getColor = () => {
-  const randomRGB = () => Math.floor(Math.random() * 256);
-  return `rgb(${randomRGB()},${randomRGB()},${randomRGB()})`;
+const random = (start, end) => {
+  return Math.floor(Math.random() * (end - start + 1)) + start;
 }
 
-const createBall = () => {
-  const ballId = `ball${Math.floor(Math.random() * 2 ** 32)}${new Date().getTime()}`;
-  ballsArray.push(ballId);
-  gel('#balls').innerHTML += `<div ball-id="${ballId}" class="ball" style="background-color: ${getColor()};"></div>`;
-  gel(`[ball-id=${ballId}]`).style.top = '300px';
-  gel(`[ball-id=${ballId}]`).style.left = '700px';
+const createRandomBall = () => {
+  const getRandomColor = () => {
+    return `rgb(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)})`;
+  }
+
+  gel('body').innerHTML += `<div class="ball" style="background-color: ${getRandomColor()}"></div>`;
 }
 
-const createBallInterval = setInterval(() => {
-  createBall();
-}, 500);
+const moveBall = (element) => {
+  element.style.top = `${+getComputedStyle(element).top.split('px').join('') + random(-3, 3)}px`;
+  element.style.left = `${+getComputedStyle(element).left.split('px').join('') + random(-3, 3)}px`;
+}
 
-const ballInterval = setInterval(() => {
-  ballsArray.forEach((ball) => {
-    gel(`[ball-id=${ball}]`).style.top = `${+gel(`[ball-id=${ball}]`).style.top.split('px').join('') + Math.floor(Math.random() * 3) - 1}px`;
-    gel(`[ball-id=${ball}]`).style.left = `${+gel(`[ball-id=${ball}]`).style.left.split('px').join('') + Math.floor(Math.random() * 3) - 1}px`;
+setInterval(() => {
+  [...document.querySelectorAll('.ball')].forEach((ball) => {
+    moveBall(ball);
   });
 }, 1);
+
+
+setInterval(() => {
+  createRandomBall();
+}, 500);
